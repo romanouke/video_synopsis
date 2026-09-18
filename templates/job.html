@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card result-hero">
+  <div>
+    <span class="badge">Job ID: {{ job_id }}</span>
+    <h1>Status Proses Video</h1>
+    <p id="status-line">Job terdaftar, menunggu proses...</p>
+  </div>
+  <div class="result-actions">
+    <a class="btn-secondary" href="/">Kembali</a>
+    <a id="download-link" class="btn-primary" style="display:none">Download output MP4</a>
+  </div>
+  <div id="details" style="margin-top:16px;display:none">
+    <h3>Ringkasan</h3>
+    <ul class="detail-list" id="detail-list"></ul>
+  </div>
+</section>
+
+<script>
+const jobId = '{{ job_id }}';
+const statusLine = document.getElementById('status-line');
+const downloadLink = document.getElementById('download-link');
+const details = document.getElementById('details');
+const detailList = document.getElementById('detail-list');
+
+async function poll() {
+  try {
+    const res = await fetch(`/status/${jobId}`);
+    if (res.status === 404) {
+      statusLine.textContent = 'Job tidak ditemukan.';
+      return;
+    }
+    const data = await res.json();
+    if (data.status === 'queued') {
+      statusLine.textContent = 'Job diterima dan dalam antrean...';
+    } else if (data.status === 'processing') {
+      statusLine.textContent = 'Sedang memproses video...';
+    } else if (data.status === 'done') {
+      statusLine.textContent = 'Selesai.';
+      downloadLink.style.display = 'inline-flex';
+      downloadLink.href = data.preview_url;
+      downloadLink.setAttribute('download', 'synopsis.mp4');
+      downloadLink.textContent = 'Download output MP4';
+      details.style.display = 'block';
+      detailList.innerHTML = '';
+      const r = data.result;
+      const items = [
+        ['Tube aktif', r.tubes],
+        ['Frame sample', r.sampled_frames],
+        ['Frame synopsis', r.synopsis_frames],
+        ['Compression ratio', (r.compression_ratio).toFixed(2)],
+        ['Runtime (s)', (r.runtime_seconds).toFixed(2)],
+      ];
+      for (const it of items) {
+        const li = document.createElement('li');
+        li.className = 'detail-list-item';
+        li.textContent = `${it[0]}: ${it[1]}`;
+        detailList.appendChild(li);
+      }
+      return;
+    } else if (data.status === 'error') {
+      statusLine.textContent = 'Terjadi error: ' + (data.error || 'unknown');
+      return;
+    }
+  } catch (e) {
+    statusLine.textContent = 'Gagal memeriksa status: ' + e.message;
+  }
+  setTimeout(poll, 2000);
+}
+poll();
+</script>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="card result-hero">
+  <div>
+    <span class="badge success">Proses selesai</span>
+    <h1>Video Synopsis berhasil dibuat</h1>
+    <p>
+      Output menampilkan tube yang disusun ulang secara temporal sehingga kejadian dari waktu berbeda dapat tampil bersamaan.
+    </p>
+  </div>
+  <div class="result-actions">
+    <a class="btn-secondary" href="/">Proses video lain</a>
+    <a class="btn-primary" href="{{ preview_url }}" download>Download output MP4</a>
+  </div>
+</section>
+
+<section class="grid stats">
+  <article class="card stat">
+    <span>Tube aktif</span>
+    <strong>{{ result.tubes }}</strong>
+  </article>
+  <article class="card stat">
+    <span>Frame sample</span>
+    <strong>{{ result.sampled_frames }}</strong>
+  </article>
+  <article class="card stat">
+    <span>Frame synopsis</span>
+    <strong>{{ result.synopsis_frames }}</strong>
+  </article>
+  <article class="card stat">
+    <span>Compression</span>
+    <strong>{{ compression_percent }}%</strong>
+  </article>
+</section>
+
+<section class="grid two-up">
+  <article class="card media-card">
+    <h2>Preview output</h2>
+    <video controls autoplay muted loop playsinline src="{{ preview_url }}"></video>
+  </article>
+
+  <article class="card feature">
+    <h2>Ringkasan proses</h2>
+    <ul class="detail-list">
+      <li><strong>Durasi runtime:</strong> {{ "%.2f"|format(result.runtime_seconds) }} detik</li>
+      <li><strong>Input path:</strong> {{ result.input_path }}</li>
+      <li><strong>Background:</strong> generated background frame</li>
+      <li><strong>Compression ratio:</strong> {{ "%.2f"|format(result.compression_ratio) }}</li>
+    </ul>
+    <h3>Catatan</h3>
+    <ul class="detail-list">
+      {% for note in result.notes %}
+      <li>{{ note }}</li>
+      {% endfor %}
+    </ul>
+    <p class="muted">
+      Background statis juga disimpan sebagai preview pendukung untuk melihat hasil generasi background.
+    </p>
+    <a class="btn-secondary inline" href="{{ background_url }}" download>Download background.jpg</a>
+  </article>
+</section>
+{% endblock %}

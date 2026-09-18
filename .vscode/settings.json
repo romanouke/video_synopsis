@@ -1,0 +1,5 @@
+{
+  "python.defaultInterpreterPath": "C:/Python314/python.exe",
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoSearchPaths": true
+}

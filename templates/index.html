@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero card">
+  <div class="hero-copy">
+    <span class="badge">Video Synopsis Concept Demo</span>
+    <h1>Memadatkan kejadian video panjang lewat temporal rearrangement object tubes.</h1>
+    <p>
+      Upload video, lalu sistem akan mendeteksi objek bergerak, membentuk tube dengan BoT-SORT-style tracking, menyusun ulang timeline,
+      dan menghasilkan output yang memperlihatkan kejadian berbeda secara bersamaan selama collision tetap rendah.
+    </p>
+    <div class="hero-points">
+      <span>Input video</span>
+      <span>Tube extraction</span>
+      <span>Collision-aware scheduling</span>
+      <span>Preview & download</span>
+    </div>
+  </div>
+
+  <form class="upload-panel" action="/process" method="post" enctype="multipart/form-data">
+    <label class="upload-box">
+      <input type="file" name="file" accept="video/*" required />
+      <strong>Pilih video input</strong>
+      <span>MP4, MOV, AVI, dan format video lain yang didukung OpenCV</span>
+    </label>
+    {% if error %}
+    <div class="alert error">{{ error }}</div>
+    {% endif %}
+    <button type="submit" class="btn-primary">Proses Video Synopsis</button>
+  </form>
+</section>
+
+<section class="grid two-up">
+  <article class="card feature">
+    <h2>Pipeline</h2>
+    <ol>
+      <li>Video preprocessing</li>
+      <li>Object detection</li>
+      <li>Object tracking</li>
+      <li>Object tube extraction</li>
+      <li>Tube filtering / cleaning</li>
+      <li>Temporal rearrangement / optimization</li>
+      <li>Foreground extraction</li>
+      <li>Background generation</li>
+      <li>Foreground + background compositing</li>
+      <li>Video encoding</li>
+      <li>Preview + download</li>
+    </ol>
+  </article>
+
+  <article class="card feature">
+    <h2>Tujuan project</h2>
+    <p>
+      Fokus project ini adalah demonstrasi konsep <strong>Video Synopsis</strong>, bukan sekadar memilih keyframe.
+      Object tubes dari waktu berbeda dapat ditumpuk pada timeline hasil jika tidak saling collision secara signifikan.
+    </p>
+    <p class="muted">
+      Implementasi ini memakai pendekatan motion-based detection agar ringan untuk demo dan mudah dikembangkan ke detector yang lebih canggih.
+    </p>
+  </article>
+</section>
+{% endblock %}
